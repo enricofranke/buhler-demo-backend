@@ -1,0 +1,26 @@
+{
+  "name": "@buhler-demo-backend/buhler-demo-backend-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@buhler-demo-backend/buhler-demo-backend"
+    ],
+    "targets": {
+      "e2e": {
+        "executor": "@nx/jest:jest",
+        "outputs": [
+          "{projectRoot}/test-output/jest/coverage"
+        ],
+        "options": {
+          "jestConfig": "apps/buhler-demo-backend-e2e/jest.config.ts",
+          "passWithNoTests": true
+        },
+        "dependsOn": [
+          "@buhler-demo-backend/buhler-demo-backend:build",
+          "@buhler-demo-backend/buhler-demo-backend:serve"
+        ]
+      }
+    }
+  }
+}

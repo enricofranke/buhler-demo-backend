@@ -1,0 +1,3 @@
+{"context":"RoutesResolver","level":"info","message":"AppController {/} (version: 1):","timestamp":"2025-06-08T14:24:55.404Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/, GET} (version: 1) route","timestamp":"2025-06-08T14:24:55.406Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2025-06-08T14:24:55.455Z"}

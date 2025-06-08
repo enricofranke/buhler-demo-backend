@@ -1,0 +1,293 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Cursor Rules für NestJS Swagger API Dokumentation
+
+## Controller API Dokumentation mit Swagger
+
+### Grundlegende Anforderungen
+
+Jeder Controller MUSS die folgenden Swagger-Dekoratoren verwenden:
+
+```typescript
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiParam,
+  ApiQuery,
+  ApiBody,
+} from '@nestjs/swagger';
+```
+
+### Controller-Level Dekoratoren
+
+**Jeder Controller MUSS diese Dekoratoren haben:**
+
+```typescript
+@ApiBearerAuth()
+@ApiTags('resource-name')
+@Controller('resource-name')
+export class ResourceController {
+  // ...
+}
+```
+
+- `@ApiBearerAuth()` - Für Authentifizierung
+- `@ApiTags('resource-name')` - Gruppiert Endpoints in der Swagger UI
+
+### Method-Level Dekoratoren
+
+**Jede Controller-Methode MUSS folgende Dekoratoren haben:**
+
+#### POST Endpoints
+```typescript
+@Post()
+@ApiOperation({ summary: 'Create [resource]' })
+@ApiResponse({ 
+  status: 201, 
+  description: 'The record has been successfully created.',
+  type: ResourceEntity 
+})
+@ApiResponse({ status: 400, description: 'Bad Request.' })
+@ApiResponse({ status: 403, description: 'Forbidden.' })
+async create(@Body() createDto: CreateResourceDto): Promise<ResourceEntity> {
+  // ...
+}
+```
+
+#### GET Endpoints (alle Ressourcen)
+```typescript
+@Get()
+@ApiOperation({ summary: 'Get all [resources]' })
+@ApiResponse({ 
+  status: 200, 
+  description: 'Return all records.',
+  type: [ResourceEntity] 
+})
+async findAll(): Promise<ResourceEntity[]> {
+  // ...
+}
+```
+
+#### GET Endpoints (einzelne Ressource)
+```typescript
+@Get(':id')
+@ApiOperation({ summary: 'Get [resource] by id' })
+@ApiParam({ name: 'id', description: 'Resource ID' })
+@ApiResponse({ 
+  status: 200, 
+  description: 'The found record.',
+  type: ResourceEntity 
+})
+@ApiResponse({ status: 404, description: 'Not Found.' })
+findOne(@Param('id') id: string): Promise<ResourceEntity> {
+  // ...
+}
+```
+
+#### PUT/PATCH Endpoints
+```typescript
+@Put(':id')
+@ApiOperation({ summary: 'Update [resource]' })
+@ApiParam({ name: 'id', description: 'Resource ID' })
+@ApiResponse({ 
+  status: 200, 
+  description: 'The record has been successfully updated.',
+  type: ResourceEntity 
+})
+@ApiResponse({ status: 404, description: 'Not Found.' })
+@ApiResponse({ status: 400, description: 'Bad Request.' })
+async update(
+  @Param('id') id: string,
+  @Body() updateDto: UpdateResourceDto
+): Promise<ResourceEntity> {
+  // ...
+}
+```
+
+#### DELETE Endpoints
+```typescript
+@Delete(':id')
+@ApiOperation({ summary: 'Delete [resource]' })
+@ApiParam({ name: 'id', description: 'Resource ID' })
+@ApiResponse({ 
+  status: 200, 
+  description: 'The record has been successfully deleted.' 
+})
+@ApiResponse({ status: 404, description: 'Not Found.' })
+async remove(@Param('id') id: string): Promise<void> {
+  // ...
+}
+```
+
+### Query Parameter Dokumentation
+
+Für Endpoints mit Query-Parametern:
+
+```typescript
+@Get()
+@ApiOperation({ summary: 'Get [resources] with filters' })
+@ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number' })
+@ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page' })
+@ApiQuery({ name: 'search', required: false, type: String, description: 'Search term' })
+@ApiResponse({ 
+  status: 200, 
+  description: 'Return filtered records.',
+  type: [ResourceEntity] 
+})
+async findWithFilters(
+  @Query('page') page?: number,
+  @Query('limit') limit?: number,
+  @Query('search') search?: string
+): Promise<ResourceEntity[]> {
+  // ...
+}
+```
+
+### Standard HTTP Status Codes
+
+**Verwende diese Standard-Status-Codes:**
+
+- `200` - OK (GET, PUT, DELETE erfolgreiche Operationen)
+- `201` - Created (POST erfolgreiche Erstellung)
+- `400` - Bad Request (Validierungsfehler)
+- `401` - Unauthorized (Nicht authentifiziert)
+- `403` - Forbidden (Nicht autorisiert)
+- `404` - Not Found (Ressource nicht gefunden)
+- `409` - Conflict (Konflikt, z.B. duplicate entry)
+- `500` - Internal Server Error (Server-Fehler)
+
+### DTOs und Entities
+
+**Alle DTOs und Entities MÜSSEN Swagger-Dekoratoren haben:**
+
+```typescript
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateResourceDto {
+  @ApiProperty({ description: 'The name of the resource' })
+  name: string;
+
+  @ApiProperty({ description: 'The description of the resource', required: false })
+  description?: string;
+
+  @ApiProperty({ description: 'The category ID', type: Number })
+  categoryId: number;
+}
+```
+
+### Vollständiges Controller-Beispiel
+
+```typescript
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ResourceService } from './resource.service';
+import { CreateResourceDto } from './dto/create-resource.dto';
+import { UpdateResourceDto } from './dto/update-resource.dto';
+import { Resource } from './entities/resource.entity';
+
+@ApiBearerAuth()
+@ApiTags('resources')
+@Controller('resources')
+export class ResourceController {
+  constructor(private readonly resourceService: ResourceService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create resource' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'The record has been successfully created.',
+    type: Resource 
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  async create(@Body() createResourceDto: CreateResourceDto): Promise<Resource> {
+    return this.resourceService.create(createResourceDto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all resources' })
+  @ApiQuery({ name: 'page', required: false, type: Number })
+  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Return all records.',
+    type: [Resource] 
+  })
+  async findAll(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number
+  ): Promise<Resource[]> {
+    return this.resourceService.findAll({ page, limit });
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get resource by id' })
+  @ApiParam({ name: 'id', description: 'Resource ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'The found record.',
+    type: Resource 
+  })
+  @ApiResponse({ status: 404, description: 'Not Found.' })
+  async findOne(@Param('id') id: string): Promise<Resource> {
+    return this.resourceService.findOne(+id);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Update resource' })
+  @ApiParam({ name: 'id', description: 'Resource ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'The record has been successfully updated.',
+    type: Resource 
+  })
+  @ApiResponse({ status: 404, description: 'Not Found.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  async update(
+    @Param('id') id: string,
+    @Body() updateResourceDto: UpdateResourceDto
+  ): Promise<Resource> {
+    return this.resourceService.update(+id, updateResourceDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete resource' })
+  @ApiParam({ name: 'id', description: 'Resource ID' })
+  @ApiResponse({ status: 200, description: 'The record has been successfully deleted.' })
+  @ApiResponse({ status: 404, description: 'Not Found.' })
+  async remove(@Param('id') id: string): Promise<void> {
+    return this.resourceService.remove(+id);
+  }
+}
+```
+
+### Checkliste für jeden Controller
+
+- [ ] `@ApiBearerAuth()` auf Controller-Level
+- [ ] `@ApiTags('resource-name')` auf Controller-Level
+- [ ] `@ApiOperation()` für jede Methode
+- [ ] `@ApiResponse()` für alle möglichen HTTP-Status-Codes
+- [ ] `@ApiParam()` für alle Route-Parameter
+- [ ] `@ApiQuery()` für alle Query-Parameter
+- [ ] Korrekte TypeScript-Typen für alle Parameter und Return-Values
+- [ ] Beschreibende Summary-Texte für alle Operationen
+
+### Wichtige Hinweise
+
+1. **Konsistenz**: Verwende einheitliche Beschreibungen und Namenskonventionen
+2. **Vollständigkeit**: Dokumentiere alle möglichen Responses
+3. **Typisierung**: Verwende immer die korrekten Entity/DTO-Typen
+4. **Beschreibungen**: Schreibe klare, verständliche Beschreibungen
+5. **Status Codes**: Verwende die Standard-HTTP-Status-Codes konsistent

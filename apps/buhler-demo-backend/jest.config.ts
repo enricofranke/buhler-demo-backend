@@ -17,5 +17,22 @@ export default {
     '^.+\\.[tj]s$': ['@swc/jest', swcJestConfig]
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: 'test-output/jest/coverage'
+  coverageDirectory: 'test-output/jest/coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,js}',
+    '!src/**/*.spec.{ts,js}',
+    '!src/**/*.interface.{ts,js}',
+    '!src/**/*.module.{ts,js}',
+    '!src/**/*.config.{ts,js}',
+    '!src/main.ts',
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 74,
+      functions: 97,
+      lines: 98,
+      statements: 98,
+    },
+  },
 };

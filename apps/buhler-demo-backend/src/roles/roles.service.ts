@@ -122,7 +122,10 @@ export class RolesService {
   private async createMissingRoles(roleNames: readonly string[]): Promise<void> {
     const rolesToCreate = this.buildCreateRoleData(roleNames);
     await this.prisma.role.createMany({
-      data: rolesToCreate,
+      data: rolesToCreate.map(role => ({
+        ...role,
+        permissions: undefined
+      })),
       skipDuplicates: true,
     });
   }

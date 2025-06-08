@@ -1,0 +1,15 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "explore.dg Local PostgreSQL",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "explore_dg",
+      "Username": "postgres",
+      "PassFile": "/tmp/pgpassfile",
+      "SSLMode": "prefer",
+      "Favorite": true
+    }
+  }
+} 

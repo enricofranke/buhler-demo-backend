@@ -1,0 +1,42 @@
+name: explore_dg_dev
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: explore-dg-postgres-dev
+    environment:
+      POSTGRES_DB: explore_dg_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - explore-dg-dev-network
+
+  # TODO: Add application service for development
+  # app:
+  #   build:
+  #     context: ../../
+  #     dockerfile: Dockerfile.dev
+  #   container_name: explore-dg-app-dev
+  #   ports:
+  #     - "3001:3000"
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - explore-dg-dev-network
+
+volumes:
+  postgres_dev_data:
+
+networks:
+  explore-dg-dev-network:
+    driver: bridge 

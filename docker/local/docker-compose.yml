@@ -1,0 +1,48 @@
+name: explore_dg_local
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: explore-dg-postgres-local
+    environment:
+      POSTGRES_DB: explore_dg
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - explore-dg-network
+
+  # Optional: pgAdmin für lokale Entwicklung
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: explore-dg-pgadmin-local
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@explore-dg.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+    command: >
+      sh -c "
+      echo 'postgres:5432:*:postgres:postgres' > /tmp/pgpassfile &&
+      chmod 600 /tmp/pgpassfile &&
+      /entrypoint.sh
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - explore-dg-network
+
+networks:
+  explore-dg-network:
+    driver: bridge 

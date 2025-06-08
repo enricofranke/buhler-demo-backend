@@ -1,0 +1,6 @@
+{"context":"RoutesResolver","level":"info","message":"AppController {/} (version: 1):","timestamp":"2025-06-08T14:04:50.492Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/, GET} (version: 1) route","timestamp":"2025-06-08T14:04:50.494Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2025-06-08T14:04:50.557Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {/} (version: 1):","timestamp":"2025-06-08T14:06:50.270Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/, GET} (version: 1) route","timestamp":"2025-06-08T14:06:50.271Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2025-06-08T14:06:50.498Z"}

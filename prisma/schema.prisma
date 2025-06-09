@@ -40,6 +40,8 @@ model User {
   // Relations - Many-to-Many with Roles
   userRoles         UserRole[]
   refreshTokens     RefreshToken[]
+  userCustomers     UserCustomer[]
+  quotations        Quotation[]
 
   @@map("users")
 }
@@ -142,6 +144,7 @@ model Machine {
   // Relations
   group               MachineGroup?      @relation(fields: [groupId], references: [id], onDelete: SetNull)
   configurationTabs   ConfigurationTab[]
+  quotations          Quotation[]
 
   @@map("machines")
 }
@@ -183,6 +186,7 @@ model Configuration {
   parentDependencies   ConfigurationDependency[] @relation("ParentConfiguration")
   childDependencies    ConfigurationDependency[] @relation("ChildConfiguration")
   tabConfigurations    TabConfiguration[]
+  quotationConfigurations QuotationConfiguration[]
 
   @@map("configurations")
 }
@@ -203,6 +207,7 @@ model ConfigurationOption {
 
   // Relations
   configuration         Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+  quotationConfigurations QuotationConfiguration[]
 
   @@map("configuration_options")
 }
@@ -285,4 +290,101 @@ enum ValidationRuleType {
   MAX_VALUE
   REGEX
   CUSTOM
+}
+
+// ===================================
+// CUSTOMER & QUOTATION SCHEMA
+// ===================================
+
+model Customer {
+  id            String   @id @default(cuid())
+  companyName   String   @map("company_name")
+  contactPerson String?  @map("contact_person")
+  email         String?
+  phone         String?
+  address       String?
+  country       String?
+  isActive      Boolean  @default(true) @map("is_active")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  userCustomers UserCustomer[]
+  quotations    Quotation[]
+
+  @@map("customers")
+}
+
+model UserCustomer {
+  id         String @id @default(cuid())
+  userId     String @map("user_id")
+  customerId String @map("customer_id")
+  
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, customerId])
+  @@map("user_customers")
+}
+
+model Quotation {
+  id               String          @id @default(cuid())
+  quotationNumber  String          @unique @map("quotation_number") // Auto-generated: QUO-2024-001
+  title            String?
+  status           QuotationStatus @default(DRAFT)
+  
+  // References
+  userId           String          @map("user_id")       // Sales person
+  customerId       String          @map("customer_id")   // Customer
+  machineId        String?         @map("machine_id")    // Selected machine (optional initially)
+  
+  // Metadata
+  totalPrice       Decimal?        @map("total_price") @db.Decimal(12, 2)
+  currency         String          @default("EUR")
+  validUntil       DateTime?       @map("valid_until")
+  
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  user             User            @relation(fields: [userId], references: [id])
+  customer         Customer        @relation(fields: [customerId], references: [id])
+  machine          Machine?        @relation(fields: [machineId], references: [id])
+  configurations   QuotationConfiguration[]
+
+  @@map("quotations")
+}
+
+model QuotationConfiguration {
+  id                      String  @id @default(cuid())
+  quotationId             String  @map("quotation_id")
+  configurationId         String  @map("configuration_id")
+  selectedOptionId        String? @map("selected_option_id")
+  customValue            String? @map("custom_value")        // For TEXT/NUMBER types
+  notes                  String?
+  
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  quotation      Quotation            @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  configuration  Configuration        @relation(fields: [configurationId], references: [id])
+  selectedOption ConfigurationOption? @relation(fields: [selectedOptionId], references: [id])
+
+  @@unique([quotationId, configurationId])
+  @@map("quotation_configurations")
+}
+
+enum QuotationStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
 }

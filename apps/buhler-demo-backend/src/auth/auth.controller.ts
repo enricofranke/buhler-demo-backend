@@ -2,7 +2,11 @@ import {
   Controller,
   Get,
   Post,
+  Body,
   UseGuards,
+  Request,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -15,12 +19,16 @@ import {
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Roles } from './decorators/roles.decorator';
 import { Public } from './decorators/public.decorator';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import type { UserWithRoles, UserProfile } from '../users/types/user.interface';
-import type { AuthResponse } from './types/auth.interface';
+import type { AuthResponse, LoginResponse, RefreshTokenResponse } from './types/auth.interface';
 
 interface PublicInfoResponse {
   readonly message: string;
@@ -42,13 +50,7 @@ interface AdminResponse {
   readonly timestamp: string;
 }
 
-interface LogoutResponse {
-  readonly message: string;
-  readonly user: {
-    readonly id: string;
-    readonly email: string;
-  };
-}
+
 
 /**
  * Controller for authentication and authorization endpoints
@@ -61,6 +63,88 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly usersService: UsersService,
   ) {}
+
+  @Post('register')
+  @Public()
+  @ApiOperation({ summary: 'Register new user' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'User successfully registered',
+    schema: {
+      type: 'object',
+      properties: {
+        accessToken: { type: 'string' },
+        refreshToken: { type: 'string' },
+        user: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            email: { type: 'string' },
+            firstName: { type: 'string' },
+            lastName: { type: 'string' }
+          }
+        },
+        expiresIn: { type: 'number' }
+      }
+    }
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request - Validation failed' })
+  @ApiResponse({ status: 409, description: 'Conflict - User already exists' })
+  async register(@Body() registerDto: RegisterDto): Promise<LoginResponse> {
+    return this.authService.register(registerDto);
+  }
+
+  @Post('login')
+  @UseGuards(LocalAuthGuard)
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Login user with credentials' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User successfully logged in',
+    schema: {
+      type: 'object',
+      properties: {
+        accessToken: { type: 'string' },
+        refreshToken: { type: 'string' },
+        user: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            email: { type: 'string' },
+            firstName: { type: 'string' },
+            lastName: { type: 'string' }
+          }
+        },
+        expiresIn: { type: 'number' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid credentials' })
+  async login(@Body() loginDto: LoginDto, @Request() req: any): Promise<LoginResponse> {
+    return this.authService.loginWithCredentials(loginDto.email, loginDto.password);
+  }
+
+  @Post('refresh')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Token successfully refreshed',
+    schema: {
+      type: 'object',
+      properties: {
+        accessToken: { type: 'string' },
+        refreshToken: { type: 'string' },
+        expiresIn: { type: 'number' }
+      }
+    }
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid refresh token' })
+  async refreshTokens(@Body() refreshTokenDto: RefreshTokenDto): Promise<RefreshTokenResponse> {
+    return this.authService.refreshTokens(refreshTokenDto.refreshToken);
+  }
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
@@ -87,32 +171,46 @@ export class AuthController {
 
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Logout user' })
+  @ApiOperation({ summary: 'Logout user and revoke refresh token' })
   @ApiResponse({ 
     status: 200, 
     description: 'User successfully logged out',
     schema: {
       type: 'object',
       properties: {
-        message: { type: 'string', example: 'Logout successful' },
-        user: {
-          type: 'object',
-          properties: {
-            id: { type: 'string', example: '123e4567-e89b-12d3-a456-426614174000' },
-            email: { type: 'string', example: 'user@example.com' }
-          }
-        }
+        message: { type: 'string', example: 'Logout successful' }
       }
     }
   })
   @ApiUnauthorizedResponse({ description: 'Unauthorized - Invalid or missing token' })
-  async logoutUser(@CurrentUser() user: UserWithRoles): Promise<LogoutResponse> {
+  async logoutUser(
+    @CurrentUser() user: UserWithRoles,
+    @Body() refreshTokenDto: RefreshTokenDto
+  ): Promise<{ message: string }> {
+    await this.authService.logout(refreshTokenDto.refreshToken);
     return {
       message: 'Logout successful',
-      user: {
-        id: user.id,
-        email: user.email,
-      },
+    };
+  }
+
+  @Post('logout-all')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Logout user from all devices' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User successfully logged out from all devices',
+    schema: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', example: 'Logged out from all devices' }
+      }
+    }
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized - Invalid or missing token' })
+  async logoutFromAllDevices(@CurrentUser() user: UserWithRoles): Promise<{ message: string }> {
+    await this.authService.logoutFromAllDevices(user.id);
+    return {
+      message: 'Logged out from all devices',
     };
   }
 

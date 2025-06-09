@@ -24,12 +24,9 @@ async function bootstrap(): Promise<void> {
   // API Versioning
   app.enableVersioning({
     type: VersioningType.URI,
-    prefix: 'v',
-    defaultVersion: '1',
+    prefix: '',
+    defaultVersion: 'v1',
   });
-
-  // CORS
-  app.enableCors();
 
   // Swagger Configuration
   const config = new DocumentBuilder()
@@ -49,10 +46,22 @@ async function bootstrap(): Promise<void> {
   });
 
   const configService = app.get(ConfigService);
+  
+  // CORS Configuration
+  app.enableCors({
+    origin: configService.get<string[]>('api.corsOrigin') || ['http://localhost:4200'],
+    credentials: true,
+  });
+
+  // Global Prefix
+  app.setGlobalPrefix(configService.get<string>('api.prefix') || 'api');
+
   const port = configService.get<number>('port') || 3000;
+  const apiPrefix = configService.get<string>('api.prefix') || 'api';
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log(`📚 Swagger documentation is available at: http://localhost:${port}/api/docs`);
+  console.log(`📚 Swagger documentation is available at: http://localhost:${port}/${apiPrefix}/docs`);
+  console.log(`🔧 API Base URL: http://localhost:${port}/${apiPrefix}`);
   await app.listen(port);
 }
 

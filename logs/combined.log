@@ -46,3 +46,138 @@
 {"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, PUT} (version: 1) route","timestamp":"2025-06-09T15:28:09.587Z"}
 {"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T15:28:09.588Z"}
 {"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2025-06-09T15:28:09.671Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {/} (version: 1):","timestamp":"2025-06-09T16:36:52.423Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.425Z"}
+{"context":"RoutesResolver","level":"info","message":"MachineGroupController {/machine-groups} (version: 1):","timestamp":"2025-06-09T16:36:52.425Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups, POST} (version: 1) route","timestamp":"2025-06-09T16:36:52.425Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.426Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.426Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, PUT} (version: 1) route","timestamp":"2025-06-09T16:36:52.426Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T16:36:52.427Z"}
+{"context":"RoutesResolver","level":"info","message":"MachineController {/machines} (version: 1):","timestamp":"2025-06-09T16:36:52.427Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines, POST} (version: 1) route","timestamp":"2025-06-09T16:36:52.427Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.427Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.427Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id/configuration, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, PUT} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RoutesResolver","level":"info","message":"ConfigurationController {/configurations} (version: 1):","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations, POST} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id/dependencies, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/validate, POST} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, PUT} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RoutesResolver","level":"info","message":"ConfigurationTabController {/configuration-tabs} (version: 1):","timestamp":"2025-06-09T16:36:52.428Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs, POST} (version: 1) route","timestamp":"2025-06-09T16:36:52.429Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.429Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.429Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id/configurations, GET} (version: 1) route","timestamp":"2025-06-09T16:36:52.429Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, PUT} (version: 1) route","timestamp":"2025-06-09T16:36:52.429Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T16:36:52.429Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2025-06-09T16:36:52.473Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {/} (version: 1):","timestamp":"2025-06-09T19:32:29.706Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.707Z"}
+{"context":"RoutesResolver","level":"info","message":"MachineGroupController {/machine-groups} (version: 1):","timestamp":"2025-06-09T19:32:29.708Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups, POST} (version: 1) route","timestamp":"2025-06-09T19:32:29.708Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.708Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.709Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, PUT} (version: 1) route","timestamp":"2025-06-09T19:32:29.709Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T19:32:29.709Z"}
+{"context":"RoutesResolver","level":"info","message":"MachineController {/machines} (version: 1):","timestamp":"2025-06-09T19:32:29.709Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines, POST} (version: 1) route","timestamp":"2025-06-09T19:32:29.710Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.710Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.710Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id/configuration, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.711Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, PUT} (version: 1) route","timestamp":"2025-06-09T19:32:29.711Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T19:32:29.711Z"}
+{"context":"RoutesResolver","level":"info","message":"ConfigurationController {/configurations} (version: 1):","timestamp":"2025-06-09T19:32:29.711Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations, POST} (version: 1) route","timestamp":"2025-06-09T19:32:29.711Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.714Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.714Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id/dependencies, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.714Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/validate, POST} (version: 1) route","timestamp":"2025-06-09T19:32:29.714Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, PUT} (version: 1) route","timestamp":"2025-06-09T19:32:29.714Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T19:32:29.714Z"}
+{"context":"RoutesResolver","level":"info","message":"ConfigurationTabController {/configuration-tabs} (version: 1):","timestamp":"2025-06-09T19:32:29.715Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs, POST} (version: 1) route","timestamp":"2025-06-09T19:32:29.715Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.715Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.715Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id/configurations, GET} (version: 1) route","timestamp":"2025-06-09T19:32:29.715Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, PUT} (version: 1) route","timestamp":"2025-06-09T19:32:29.715Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, DELETE} (version: 1) route","timestamp":"2025-06-09T19:32:29.715Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2025-06-09T19:32:29.759Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {/} (version: v1):","timestamp":"2025-06-09T19:46:17.686Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.688Z"}
+{"context":"RoutesResolver","level":"info","message":"MachineGroupController {/machine-groups} (version: v1):","timestamp":"2025-06-09T19:46:17.688Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups, POST} (version: v1) route","timestamp":"2025-06-09T19:46:17.689Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.689Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.689Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, PUT} (version: v1) route","timestamp":"2025-06-09T19:46:17.690Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, DELETE} (version: v1) route","timestamp":"2025-06-09T19:46:17.690Z"}
+{"context":"RoutesResolver","level":"info","message":"MachineController {/machines} (version: v1):","timestamp":"2025-06-09T19:46:17.690Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines, POST} (version: v1) route","timestamp":"2025-06-09T19:46:17.690Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.691Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.691Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id/configuration, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.691Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, PUT} (version: v1) route","timestamp":"2025-06-09T19:46:17.691Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, DELETE} (version: v1) route","timestamp":"2025-06-09T19:46:17.691Z"}
+{"context":"RoutesResolver","level":"info","message":"ConfigurationController {/configurations} (version: v1):","timestamp":"2025-06-09T19:46:17.691Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations, POST} (version: v1) route","timestamp":"2025-06-09T19:46:17.691Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.691Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id/dependencies, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/validate, POST} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, PUT} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, DELETE} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RoutesResolver","level":"info","message":"ConfigurationTabController {/configuration-tabs} (version: v1):","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs, POST} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id/configurations, GET} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, PUT} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, DELETE} (version: v1) route","timestamp":"2025-06-09T19:46:17.692Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2025-06-09T19:46:17.726Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {/} (version: v1):","timestamp":"2025-06-09T19:49:19.267Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.269Z"}
+{"context":"RoutesResolver","level":"info","message":"AuthController {/auth} (version: v1):","timestamp":"2025-06-09T19:49:19.269Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/register, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.269Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/login, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.270Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/refresh, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.270Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/profile, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.270Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/logout, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.271Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/logout-all, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.271Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/me, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.271Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/admin-only, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.271Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/sales-dashboard, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/public-info, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RoutesResolver","level":"info","message":"MachineGroupController {/machine-groups} (version: v1):","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, PUT} (version: v1) route","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machine-groups/:id, DELETE} (version: v1) route","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RoutesResolver","level":"info","message":"MachineController {/machines} (version: v1):","timestamp":"2025-06-09T19:49:19.272Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.273Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.273Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.273Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id/configuration, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.273Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, PUT} (version: v1) route","timestamp":"2025-06-09T19:49:19.273Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/machines/:id, DELETE} (version: v1) route","timestamp":"2025-06-09T19:49:19.273Z"}
+{"context":"RoutesResolver","level":"info","message":"ConfigurationController {/configurations} (version: v1):","timestamp":"2025-06-09T19:49:19.273Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.273Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id/dependencies, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/validate, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, PUT} (version: v1) route","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configurations/:id, DELETE} (version: v1) route","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RoutesResolver","level":"info","message":"ConfigurationTabController {/configuration-tabs} (version: v1):","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs, POST} (version: v1) route","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.274Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.275Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id/configurations, GET} (version: v1) route","timestamp":"2025-06-09T19:49:19.275Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, PUT} (version: v1) route","timestamp":"2025-06-09T19:49:19.275Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/configuration-tabs/:id, DELETE} (version: v1) route","timestamp":"2025-06-09T19:49:19.275Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2025-06-09T19:49:19.329Z"}

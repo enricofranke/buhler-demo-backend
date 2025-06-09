@@ -21,11 +21,13 @@ model User {
   displayName       String?  @map("display_name")
   
   // Authentication fields
+  passwordHash      String?  @map("password_hash") // For local authentication
   microsoftId       String?  @unique @map("microsoft_id")
   userPrincipalName String?  @map("user_principal_name")
   
   // Status
   isActive          Boolean  @default(true) @map("is_active")
+  isEmailVerified   Boolean  @default(false) @map("is_email_verified")
   
   // Microsoft Graph data (for reference, mapping happens in code)
   microsoftGroups   String[] @map("microsoft_groups")
@@ -37,6 +39,7 @@ model User {
 
   // Relations - Many-to-Many with Roles
   userRoles         UserRole[]
+  refreshTokens     RefreshToken[]
 
   @@map("users")
 }
@@ -81,6 +84,27 @@ model UserRole {
 
   @@unique([userId, roleId])
   @@map("user_roles")
+}
+
+// Refresh Token for JWT authentication
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique // Hashed refresh token
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  isRevoked Boolean  @default(false) @map("is_revoked")
+  
+  // Metadata for security
+  userAgent String?  @map("user_agent")
+  ipAddress String?  @map("ip_address")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
 }
 
 // ===================================

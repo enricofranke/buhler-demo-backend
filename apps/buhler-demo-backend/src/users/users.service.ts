@@ -44,6 +44,7 @@ export class UsersService {
         firstName: userData.firstName,
         lastName: userData.lastName,
         displayName: userData.displayName,
+        passwordHash: userData.passwordHash,
         lastLoginAt: new Date(),
       },
       include: this.buildUserIncludeOptions(),
@@ -97,6 +98,18 @@ export class UsersService {
    */
   extractUserRoleNames(user: UserWithRoles): string[] {
     return user.userRoles.map(userRole => userRole.role.name);
+  }
+
+  /**
+   * Update user's last login timestamp
+   */
+  async updateLastLogin(userId: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        lastLoginAt: new Date(),
+      },
+    });
   }
 
 

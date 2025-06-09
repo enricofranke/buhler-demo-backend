@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RolesGuard } from './roles.guard';
 import { ROLES_KEY } from '../decorators/roles.decorator';
@@ -115,16 +115,13 @@ describe('RolesGuard', () => {
       expect(result).toBe(true);
     });
 
-    it('should return false when no user is present in request', () => {
+    it('should throw ForbiddenException when no user is present in request', () => {
       // Arrange
       const context = createMockExecutionContext();
       reflector.getAllAndOverride.mockReturnValue(['ADMIN']);
 
-      // Act
-      const result = guard.canActivate(context);
-
-      // Assert
-      expect(result).toBe(false);
+      // Act & Assert
+      expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
     });
 
     it('should return true when user has required role', () => {
@@ -151,16 +148,13 @@ describe('RolesGuard', () => {
       expect(result).toBe(true);
     });
 
-    it('should return false when user does not have any required roles', () => {
+    it('should throw ForbiddenException when user does not have any required roles', () => {
       // Arrange
       const context = createMockExecutionContext(mockUser);
       reflector.getAllAndOverride.mockReturnValue(['MANAGER', 'SUPPORT']);
 
-      // Act
-      const result = guard.canActivate(context);
-
-      // Assert
-      expect(result).toBe(false);
+      // Act & Assert
+      expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
     });
 
     it('should return true when user has SALES role', () => {
@@ -175,7 +169,7 @@ describe('RolesGuard', () => {
       expect(result).toBe(true);
     });
 
-    it('should handle user with no roles', () => {
+    it('should throw ForbiddenException when user has no roles', () => {
       // Arrange
       const userWithoutRoles: UserWithRoles = {
         ...mockUser,
@@ -184,26 +178,20 @@ describe('RolesGuard', () => {
       const context = createMockExecutionContext(userWithoutRoles);
       reflector.getAllAndOverride.mockReturnValue(['ADMIN']);
 
-      // Act
-      const result = guard.canActivate(context);
-
-      // Assert
-      expect(result).toBe(false);
+      // Act & Assert
+      expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
     });
 
-    it('should handle case-sensitive role comparison', () => {
+    it('should throw ForbiddenException for case-sensitive role comparison', () => {
       // Arrange
       const context = createMockExecutionContext(mockUser);
       reflector.getAllAndOverride.mockReturnValue(['admin']); // lowercase
 
-      // Act
-      const result = guard.canActivate(context);
-
-      // Assert
-      expect(result).toBe(false); // Should not match 'ADMIN'
+      // Act & Assert
+      expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
     });
 
-    it('should handle user with single role matching requirement', () => {
+    it('should return true when user has single role matching requirement', () => {
       // Arrange
       const userWithSingleRole: UserWithRoles = {
         ...mockUser,
@@ -233,7 +221,7 @@ describe('RolesGuard', () => {
       expect(result).toBe(true);
     });
 
-    it('should handle multiple required roles where user has none', () => {
+    it('should throw ForbiddenException when user has different roles than required', () => {
       // Arrange
       const userWithDifferentRole: UserWithRoles = {
         ...mockUser,
@@ -256,16 +244,13 @@ describe('RolesGuard', () => {
       const context = createMockExecutionContext(userWithDifferentRole);
       reflector.getAllAndOverride.mockReturnValue(['ADMIN', 'MANAGER', 'SALES']);
 
-      // Act
-      const result = guard.canActivate(context);
-
-      // Assert
-      expect(result).toBe(false);
+      // Act & Assert
+      expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
     });
   });
 
   describe('edge cases', () => {
-    it('should handle undefined user object', () => {
+    it('should throw ForbiddenException when user object is undefined', () => {
       // Arrange
       const mockRequest = { user: undefined };
       const context = {
@@ -278,11 +263,8 @@ describe('RolesGuard', () => {
 
       reflector.getAllAndOverride.mockReturnValue(['ADMIN']);
 
-      // Act
-      const result = guard.canActivate(context);
-
-      // Assert
-      expect(result).toBe(false);
+      // Act & Assert
+      expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
     });
 
     it('should handle null roles array from reflector', () => {

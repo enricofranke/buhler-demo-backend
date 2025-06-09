@@ -104,6 +104,80 @@ describe('RolesService', () => {
       expect(result).toEqual([mockRole.id, newRole.id]);
       expect(prismaService.role.createMany).toHaveBeenCalled();
     });
+
+    it('should create roles with default display names for unknown roles', async () => {
+      // Arrange
+      const roleNames = ['UNKNOWN_ROLE'];
+      const existingRoles: any[] = [];
+
+      prismaService.role.findMany
+        .mockResolvedValueOnce(existingRoles) // First call for existing roles
+        .mockResolvedValueOnce([{ id: 'new-role-id', name: 'UNKNOWN_ROLE' }]); // Second call for new roles
+
+      prismaService.role.createMany.mockResolvedValue({ count: 1 });
+
+      // Act
+      const result = await service.getRoleIdsByNames(roleNames);
+
+      // Assert
+      expect(prismaService.role.createMany).toHaveBeenCalledWith({
+        data: [
+          {
+            name: 'UNKNOWN_ROLE',
+            displayName: 'UNKNOWN_ROLE',
+            description: 'UNKNOWN_ROLE role',
+            isSystem: true,
+          },
+        ],
+        skipDuplicates: true,
+      });
+      expect(result).toEqual(['new-role-id']);
+    });
+
+    it('should handle multiple missing roles with known display names', async () => {
+      // Arrange
+      const roleNames = ['ADMIN', 'SALES', 'MODERATOR'];
+      const existingRoles: any[] = [];
+
+      prismaService.role.findMany
+        .mockResolvedValueOnce(existingRoles) // First call for existing roles
+        .mockResolvedValueOnce([
+          { id: 'admin-id', name: 'ADMIN' },
+          { id: 'sales-id', name: 'SALES' },
+          { id: 'mod-id', name: 'MODERATOR' },
+        ]); // Second call for new roles
+
+      prismaService.role.createMany.mockResolvedValue({ count: 3 });
+
+      // Act
+      const result = await service.getRoleIdsByNames(roleNames);
+
+      // Assert
+      expect(prismaService.role.createMany).toHaveBeenCalledWith({
+        data: [
+          {
+            name: 'ADMIN',
+            displayName: 'Administrator',
+            description: 'Administrator role',
+            isSystem: true,
+          },
+          {
+            name: 'SALES',
+            displayName: 'Sales Representative',
+            description: 'Sales Representative role',
+            isSystem: true,
+          },
+          {
+            name: 'MODERATOR',
+            displayName: 'Moderator',
+            description: 'Moderator role',
+            isSystem: true,
+          },
+        ],
+        skipDuplicates: true,
+      });
+      expect(result).toEqual(['admin-id', 'sales-id', 'mod-id']);
+    });
   });
 
   describe('assignRolesToUser', () => {
@@ -276,6 +350,84 @@ describe('RolesService', () => {
         ],
         skipDuplicates: true,
       });
+    });
+
+    it('should handle sync when no roles to remove', async () => {
+      // Arrange
+      const userId = 'user-123';
+      const newRoleIds = ['role-1', 'role-2'];
+
+      // Mock getCurrentSystemRoleIds - user already has role-1
+      prismaService.userRole.findMany.mockResolvedValue([
+        { roleId: 'role-1' },
+      ]);
+
+      // Mock assignRolesToUser
+      prismaService.userRole.createMany.mockResolvedValue({ count: 1 });
+
+      // Act
+      await service.syncUserRoles(userId, newRoleIds);
+
+      // Assert
+      expect(prismaService.userRole.updateMany).not.toHaveBeenCalled();
+      expect(prismaService.userRole.createMany).toHaveBeenCalledWith({
+        data: [
+          {
+            userId,
+            roleId: 'role-2',
+            assignedBy: 'SYSTEM',
+          },
+        ],
+        skipDuplicates: true,
+      });
+    });
+
+    it('should handle sync when no roles to add', async () => {
+      // Arrange
+      const userId = 'user-123';
+      const newRoleIds = ['role-1'];
+
+      // Mock getCurrentSystemRoleIds - user has role-1 and role-old
+      prismaService.userRole.findMany.mockResolvedValue([
+        { roleId: 'role-1' },
+        { roleId: 'role-old' },
+      ]);
+
+      // Mock deactivateUserRoles
+      prismaService.userRole.updateMany.mockResolvedValue({ count: 1 });
+
+      // Act
+      await service.syncUserRoles(userId, newRoleIds);
+
+      // Assert
+      expect(prismaService.userRole.updateMany).toHaveBeenCalledWith({
+        where: {
+          userId,
+          roleId: { in: ['role-old'] },
+          assignedBy: 'SYSTEM',
+        },
+        data: { isActive: false },
+      });
+      expect(prismaService.userRole.createMany).not.toHaveBeenCalled();
+    });
+
+    it('should handle sync when no changes needed', async () => {
+      // Arrange
+      const userId = 'user-123';
+      const newRoleIds = ['role-1', 'role-2'];
+
+      // Mock getCurrentSystemRoleIds - user already has exact same roles
+      prismaService.userRole.findMany.mockResolvedValue([
+        { roleId: 'role-1' },
+        { roleId: 'role-2' },
+      ]);
+
+      // Act
+      await service.syncUserRoles(userId, newRoleIds);
+
+      // Assert
+      expect(prismaService.userRole.updateMany).not.toHaveBeenCalled();
+      expect(prismaService.userRole.createMany).not.toHaveBeenCalled();
     });
   });
 }); 

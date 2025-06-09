@@ -48,9 +48,16 @@ async function bootstrap(): Promise<void> {
   const configService = app.get(ConfigService);
   
   // CORS Configuration
+  // TODO: PRODUCTION SECURITY - Restrict CORS origins for production deployment!
+  // Currently open for all origins during development for easier testing
   app.enableCors({
-    origin: configService.get<string[]>('api.corsOrigin') || ['http://localhost:4200'],
+    origin: true, // Allow all origins during development
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+    allowedHeaders: '*', // Allow all headers during development
+    exposedHeaders: ['Authorization', 'Content-Length', 'X-Requested-With'],
+    preflightContinue: false,
+    optionsSuccessStatus: 200
   });
 
   // Global Prefix

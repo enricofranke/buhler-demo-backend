@@ -3,6 +3,7 @@ export interface CreateUserDto {
   readonly firstName?: string;
   readonly lastName?: string;
   readonly displayName?: string;
+  readonly passwordHash?: string;
 }
 
 import type { JsonValue } from '@prisma/client/runtime/library';
@@ -27,6 +28,7 @@ export interface UserWithRoles {
   readonly firstName: string | null;
   readonly lastName: string | null;
   readonly displayName: string | null;
+  readonly passwordHash: string | null;
   readonly isActive: boolean;
   readonly createdAt: Date;
   readonly updatedAt: Date;

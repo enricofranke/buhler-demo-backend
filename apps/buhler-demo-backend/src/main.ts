@@ -24,12 +24,9 @@ async function bootstrap(): Promise<void> {
   // API Versioning
   app.enableVersioning({
     type: VersioningType.URI,
-    prefix: 'v',
-    defaultVersion: '1',
+    prefix: '',
+    defaultVersion: 'v1',
   });
-
-  // CORS
-  app.enableCors();
 
   // Swagger Configuration
   const config = new DocumentBuilder()
@@ -49,10 +46,43 @@ async function bootstrap(): Promise<void> {
   });
 
   const configService = app.get(ConfigService);
+  
+  // CORS Configuration
+  // TODO: PRODUCTION SECURITY - Restrict CORS origins for production deployment!
+  // Currently configured specifically for Angular SSR development
+  app.enableCors({
+    origin: [
+      'http://localhost:4200',  // Angular SSR
+      'http://localhost:3000',  // Backup
+      'http://127.0.0.1:4200',  // Alternative localhost
+      'http://127.0.0.1:3000'   // Alternative localhost
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With', 
+      'Content-Type', 
+      'Accept',
+      'Authorization',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Request-Method',
+      'Access-Control-Request-Headers'
+    ],
+    exposedHeaders: ['Authorization', 'Content-Length', 'X-Requested-With'],
+    preflightContinue: false,
+    optionsSuccessStatus: 200
+  });
+
+  // Global Prefix
+  app.setGlobalPrefix(configService.get<string>('api.prefix') || 'api');
+
   const port = configService.get<number>('port') || 3000;
+  const apiPrefix = configService.get<string>('api.prefix') || 'api';
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
-  console.log(`📚 Swagger documentation is available at: http://localhost:${port}/api/docs`);
+  console.log(`📚 Swagger documentation is available at: http://localhost:${port}/${apiPrefix}/docs`);
+  console.log(`🔧 API Base URL: http://localhost:${port}/${apiPrefix}`);
   await app.listen(port);
 }
 

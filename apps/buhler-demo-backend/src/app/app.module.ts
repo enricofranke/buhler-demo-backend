@@ -8,6 +8,8 @@ import * as winston from 'winston';
 
 import configuration from '../config/configuration';
 import { PrismaModule } from '../prisma/prisma.module';
+import { MachineConfiguratorModule } from '../machine-configurator/machine-configurator.module';
+import { AuthModule } from '../auth/auth.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -53,6 +55,8 @@ import { AppService } from './app.service';
       isGlobal: true,
     }),
     PrismaModule,
+    AuthModule,
+    MachineConfiguratorModule,
   ],
   controllers: [AppController],
   providers: [AppService],

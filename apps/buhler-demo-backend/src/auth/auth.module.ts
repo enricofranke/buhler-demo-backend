@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+import { TokenService } from './services/token.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { UsersModule } from '../users/users.module';
 import { RolesModule } from '../roles/roles.module';
@@ -28,7 +30,7 @@ import { RolesModule } from '../roles/roles.module';
     RolesModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, LocalStrategy, TokenService],
   exports: [AuthService, PassportModule, JwtModule],
 })
 export class AuthModule {} 

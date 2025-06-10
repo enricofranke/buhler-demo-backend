@@ -21,11 +21,13 @@ model User {
   displayName       String?  @map("display_name")
   
   // Authentication fields
+  passwordHash      String?  @map("password_hash") // For local authentication
   microsoftId       String?  @unique @map("microsoft_id")
   userPrincipalName String?  @map("user_principal_name")
   
   // Status
   isActive          Boolean  @default(true) @map("is_active")
+  isEmailVerified   Boolean  @default(false) @map("is_email_verified")
   
   // Microsoft Graph data (for reference, mapping happens in code)
   microsoftGroups   String[] @map("microsoft_groups")
@@ -37,6 +39,9 @@ model User {
 
   // Relations - Many-to-Many with Roles
   userRoles         UserRole[]
+  refreshTokens     RefreshToken[]
+  userCustomers     UserCustomer[]
+  quotations        Quotation[]
 
   @@map("users")
 }
@@ -81,4 +86,305 @@ model UserRole {
 
   @@unique([userId, roleId])
   @@map("user_roles")
+}
+
+// Refresh Token for JWT authentication
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique // Hashed refresh token
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  isRevoked Boolean  @default(false) @map("is_revoked")
+  
+  // Metadata for security
+  userAgent String?  @map("user_agent")
+  ipAddress String?  @map("ip_address")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+// ===================================
+// PRODUCT CONFIGURATOR SCHEMA
+// ===================================
+
+model MachineGroup {
+  id          String   @id @default(cuid())
+  name        String   @unique // "Grinding", "Rollers", etc.
+  description String
+  color       String?  // For UI representation
+  icon        String?  // Icon identifier
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  machines    Machine[]
+
+  @@map("machine_groups")
+}
+
+model Machine {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  groupId     String?  @map("group_id")
+  tags        String[] // Alternative/additional grouping
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  group               MachineGroup?      @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  configurationTabs   ConfigurationTab[]
+  quotations          Quotation[]
+
+  @@map("machines")
+}
+
+model ConfigurationTab {
+  id          String  @id @default(cuid())
+  machineId   String  @map("machine_id")
+  name        String  // "Equipment", "Safety", "Options"
+  description String?
+  order       Int     // Order of tabs
+  isActive    Boolean @default(true) @map("is_active")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  machine            Machine            @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  tabConfigurations  TabConfiguration[]
+
+  @@map("configuration_tabs")
+}
+
+model Configuration {
+  id               String   @id @default(cuid())
+  name             String   // "Machine Design"
+  description      String
+  helpText         String   @map("help_text") // Help description
+  type             ConfigurationType
+  isRequired       Boolean  @default(false) @map("is_required")
+  aiLogicHint      String?  @map("ai_logic_hint") // Logic field for AI decisions
+  isActive         Boolean  @default(true) @map("is_active")
+  
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  options              ConfigurationOption[]
+  validationRules      ValidationRule[]
+  parentDependencies   ConfigurationDependency[] @relation("ParentConfiguration")
+  childDependencies    ConfigurationDependency[] @relation("ChildConfiguration")
+  tabConfigurations    TabConfiguration[]
+  quotationConfigurations QuotationConfiguration[]
+
+  @@map("configurations")
+}
+
+model ConfigurationOption {
+  id                    String  @id @default(cuid())
+  configurationId       String  @map("configuration_id")
+  value                 String  // "open_version", "clean_room_version"
+  displayName           String  @map("display_name")
+  description           String?
+  priceModifier         Decimal? @map("price_modifier") @db.Decimal(10, 2)
+  isDefault             Boolean @default(false) @map("is_default")
+  availabilityConditions String? @map("availability_conditions") // JSON with conditions
+  isActive              Boolean @default(true) @map("is_active")
+  
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  configuration         Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+  quotationConfigurations QuotationConfiguration[]
+
+  @@map("configuration_options")
+}
+
+model TabConfiguration {
+  id                   String  @id @default(cuid())
+  tabId                String  @map("tab_id")
+  configurationId      String  @map("configuration_id")
+  order                Int     // Order within tab
+  customLabel          String? @map("custom_label") // Custom label if different from standard
+  isVisible            Boolean @default(true) @map("is_visible")
+  visibilityConditions String? @map("visibility_conditions") // JSON with conditions
+  
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tab                  ConfigurationTab @relation(fields: [tabId], references: [id], onDelete: Cascade)
+  configuration        Configuration    @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+
+  @@unique([tabId, configurationId])
+  @@map("tab_configurations")
+}
+
+model ConfigurationDependency {
+  id                     String                    @id @default(cuid())
+  parentConfigurationId  String                    @map("parent_configuration_id")
+  childConfigurationId   String                    @map("child_configuration_id")
+  condition              String                    // JSON rule, e.g. "parent_value == 'Clean Room Version'"
+  action                 ConfigurationDependencyAction
+  
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  parentConfiguration    Configuration @relation("ParentConfiguration", fields: [parentConfigurationId], references: [id], onDelete: Cascade)
+  childConfiguration     Configuration @relation("ChildConfiguration", fields: [childConfigurationId], references: [id], onDelete: Cascade)
+
+  @@map("configuration_dependencies")
+}
+
+model ValidationRule {
+  id              String           @id @default(cuid())
+  configurationId String           @map("configuration_id")
+  ruleType        ValidationRuleType @map("rule_type")
+  ruleValue       String           @map("rule_value")
+  errorMessage    String           @map("error_message")
+  isActive        Boolean          @default(true) @map("is_active")
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  configuration   Configuration @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+
+  @@map("validation_rules")
+}
+
+// ===================================
+// ENUMS FOR PRODUCT CONFIGURATOR
+// ===================================
+
+enum ConfigurationType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  BOOLEAN
+  TEXT
+  NUMBER
+}
+
+enum ConfigurationDependencyAction {
+  SHOW
+  HIDE
+  REQUIRE
+  DISABLE
+}
+
+enum ValidationRuleType {
+  MIN_VALUE
+  MAX_VALUE
+  REGEX
+  CUSTOM
+}
+
+// ===================================
+// CUSTOMER & QUOTATION SCHEMA
+// ===================================
+
+model Customer {
+  id            String   @id @default(cuid())
+  companyName   String   @map("company_name")
+  contactPerson String?  @map("contact_person")
+  email         String?
+  phone         String?
+  address       String?
+  country       String?
+  isActive      Boolean  @default(true) @map("is_active")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  userCustomers UserCustomer[]
+  quotations    Quotation[]
+
+  @@map("customers")
+}
+
+model UserCustomer {
+  id         String @id @default(cuid())
+  userId     String @map("user_id")
+  customerId String @map("customer_id")
+  
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, customerId])
+  @@map("user_customers")
+}
+
+model Quotation {
+  id               String          @id @default(cuid())
+  quotationNumber  String          @unique @map("quotation_number") // Auto-generated: QUO-2024-001
+  title            String?
+  status           QuotationStatus @default(DRAFT)
+  
+  // References
+  userId           String          @map("user_id")       // Sales person
+  customerId       String          @map("customer_id")   // Customer
+  machineId        String?         @map("machine_id")    // Selected machine (optional initially)
+  
+  // Metadata
+  totalPrice       Decimal?        @map("total_price") @db.Decimal(12, 2)
+  currency         String          @default("EUR")
+  validUntil       DateTime?       @map("valid_until")
+  
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  user             User            @relation(fields: [userId], references: [id])
+  customer         Customer        @relation(fields: [customerId], references: [id])
+  machine          Machine?        @relation(fields: [machineId], references: [id])
+  configurations   QuotationConfiguration[]
+
+  @@map("quotations")
+}
+
+model QuotationConfiguration {
+  id                      String  @id @default(cuid())
+  quotationId             String  @map("quotation_id")
+  configurationId         String  @map("configuration_id")
+  selectedOptionId        String? @map("selected_option_id")
+  customValue            String? @map("custom_value")        // For TEXT/NUMBER types
+  notes                  String?
+  
+  createdAt              DateTime @default(now()) @map("created_at")
+  updatedAt              DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  quotation      Quotation            @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  configuration  Configuration        @relation(fields: [configurationId], references: [id])
+  selectedOption ConfigurationOption? @relation(fields: [selectedOptionId], references: [id])
+
+  @@unique([quotationId, configurationId])
+  @@map("quotation_configurations")
+}
+
+enum QuotationStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
 }

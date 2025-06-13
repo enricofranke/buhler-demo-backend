@@ -40,7 +40,7 @@ export class MachineGroupController {
   @ApiOperation({ summary: 'Get all machine groups' })
   @ApiResponse({ 
     status: 200, 
-    description: 'Return all records.',
+    description: 'Return all machine groups with machine count.',
     type: [Object] 
   })
   async findAll(): Promise<MachineGroupWithMachines[]> {
@@ -53,7 +53,7 @@ export class MachineGroupController {
   @ApiParam({ name: 'id', description: 'Machine Group ID' })
   @ApiResponse({ 
     status: 200, 
-    description: 'The found record.',
+    description: 'The found machine group.',
     type: Object 
   })
   @ApiResponse({ status: 404, description: 'Not Found.' })
@@ -90,5 +90,19 @@ export class MachineGroupController {
   @ApiResponse({ status: 404, description: 'Not Found.' })
   async remove(@Param('id') id: string): Promise<void> {
     return this.machineGroupService.remove(id);
+  }
+
+  @Get(':id/machines')
+  @Roles('ADMIN', 'SALES', 'USER')
+  @ApiOperation({ summary: 'Get machines for a machine group' })
+  @ApiParam({ name: 'id', description: 'Machine Group ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Return machines for the machine group.',
+    type: [Object] 
+  })
+  @ApiResponse({ status: 404, description: 'Machine Group not found.' })
+  async getMachines(@Param('id') id: string) {
+    return this.machineGroupService.getMachines(id);
   }
 } 

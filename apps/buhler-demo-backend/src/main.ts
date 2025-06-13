@@ -49,12 +49,26 @@ async function bootstrap(): Promise<void> {
   
   // CORS Configuration
   // TODO: PRODUCTION SECURITY - Restrict CORS origins for production deployment!
-  // Currently open for all origins during development for easier testing
+  // Currently configured specifically for Angular SSR development
   app.enableCors({
-    origin: true, // Allow all origins during development
+    origin: [
+      'http://localhost:4200',  // Angular SSR
+      'http://localhost:3000',  // Backup
+      'http://127.0.0.1:4200',  // Alternative localhost
+      'http://127.0.0.1:3000'   // Alternative localhost
+    ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'],
-    allowedHeaders: '*', // Allow all headers during development
+    allowedHeaders: [
+      'Origin',
+      'X-Requested-With', 
+      'Content-Type', 
+      'Accept',
+      'Authorization',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Request-Method',
+      'Access-Control-Request-Headers'
+    ],
     exposedHeaders: ['Authorization', 'Content-Length', 'X-Requested-With'],
     preflightContinue: false,
     optionsSuccessStatus: 200

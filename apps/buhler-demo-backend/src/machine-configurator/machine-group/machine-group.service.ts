@@ -36,6 +36,18 @@ export class MachineGroupService {
     return machineGroup;
   }
 
+  async getMachines(machineGroupId: string) {
+    const machineGroup = await this.findOne(machineGroupId);
+    
+    return await this.prisma.machine.findMany({
+      where: { 
+        groupId: machineGroupId,
+        isActive: true 
+      },
+      orderBy: { name: 'asc' }
+    });
+  }
+
   async update(id: string, updateMachineGroupDto: UpdateMachineGroupDto): Promise<MachineGroupWithMachines> {
     await this.findOne(id); // Check if exists
 

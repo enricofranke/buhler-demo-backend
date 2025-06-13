@@ -142,9 +142,12 @@ model Machine {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
-  group               MachineGroup?      @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  group               MachineGroup?              @relation(fields: [groupId], references: [id], onDelete: SetNull)
   configurationTabs   ConfigurationTab[]
   quotations          Quotation[]
+  // Rule System Integration
+  machineRules        MachineRule[]
+  dependencyCache     DependencyEvaluationCache[]
 
   @@map("machines")
 }
@@ -187,6 +190,8 @@ model Configuration {
   childDependencies    ConfigurationDependency[] @relation("ChildConfiguration")
   tabConfigurations    TabConfiguration[]
   quotationConfigurations QuotationConfiguration[]
+  // Rule System Integration
+  configurationRules   ConfigurationRule[]
 
   @@map("configurations")
 }
@@ -267,6 +272,175 @@ model ValidationRule {
 }
 
 // ===================================
+// RULE SYSTEM SCHEMA
+// ===================================
+
+model Rule {
+  id                    String                    @id @default(cuid())
+  name                  String                    // "Clean Room Safety Requirement"
+  description           String?
+  category              RuleCategory              // DEPENDENCY, VALIDATION, BUSINESS_LOGIC
+  ruleType              RuleType                  // SHOW_HIDE, REQUIRE_OPTIONAL, PRICE_MODIFIER, etc.
+  
+  // Rule Definition
+  isActive              Boolean                   @default(true) @map("is_active")
+  priority              Int                       @default(0) // Ausführungsreihenfolge
+  version               String                    @default("1.0") // Für Versionierung
+  
+  // Metadata
+  createdBy             String?                   @map("created_by")
+  lastModifiedBy        String?                   @map("last_modified_by")
+  tags                  String[]                  // Für Gruppierung/Suche
+  
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  conditions            RuleCondition[]           // Was muss erfüllt sein
+  actions               RuleAction[]              // Was passiert dann
+  configurationRules    ConfigurationRule[]       // Welche Configs nutzen diese Rule
+  machineRules          MachineRule[]             // Welche Machines nutzen diese Rule
+
+  @@map("rules")
+}
+
+model RuleCondition {
+  id                    String                    @id @default(cuid())
+  ruleId                String                    @map("rule_id")
+  
+  // Condition Definition
+  conditionType         ConditionType             @map("condition_type")
+  targetType            ConditionTargetType       @map("target_type") // CONFIGURATION, OPTION, CUSTOM_FIELD
+  targetId              String                    @map("target_id") // ID der Configuration/Option
+  
+  // Logic
+  operator              ConditionOperator
+  expectedValue         String?                   @map("expected_value")
+  customLogic           String?                   @map("custom_logic") // JSON für komplexe Logik
+  
+  // Grouping für AND/OR
+  conditionGroup        String?                   @map("condition_group") // "group_1", "group_2"
+  logicalOperator       LogicalOperator           @default(AND) @map("logical_operator")
+  
+  isActive              Boolean                   @default(true) @map("is_active")
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  rule                  Rule                      @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@map("rule_conditions")
+}
+
+model RuleAction {
+  id                    String                    @id @default(cuid())
+  ruleId                String                    @map("rule_id")
+  
+  // Action Definition
+  actionType            ActionType                @map("action_type")
+  targetType            ActionTargetType          @map("target_type") // CONFIGURATION, OPTION, PRICE, MESSAGE
+  targetId              String?                   @map("target_id") // Optional: spezifisches Target
+  
+  // Action Parameters
+  actionValue           String?                   @map("action_value") // Wert für die Aktion
+  actionData            Json?                     @map("action_data") // Flexible JSON-Daten
+  message               String?                   // User-Message bei Warnings/Errors
+  
+  // Execution
+  executionOrder        Int                       @default(0) @map("execution_order")
+  isActive              Boolean                   @default(true) @map("is_active")
+  
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  rule                  Rule                      @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@map("rule_actions")
+}
+
+model ConfigurationRule {
+  id                    String                    @id @default(cuid())
+  configurationId       String                    @map("configuration_id")
+  ruleId                String                    @map("rule_id")
+  
+  // Metadata
+  isActive              Boolean                   @default(true) @map("is_active")
+  appliedOrder          Int                       @default(0) @map("applied_order") // Reihenfolge
+  customParameters      Json?                     @map("custom_parameters") // Überschreibungen
+  
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  configuration         Configuration             @relation(fields: [configurationId], references: [id], onDelete: Cascade)
+  rule                  Rule                      @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@unique([configurationId, ruleId])
+  @@map("configuration_rules")
+}
+
+model MachineRule {
+  id                    String                    @id @default(cuid())
+  machineId             String                    @map("machine_id")
+  ruleId                String                    @map("rule_id")
+  
+  // Scope
+  applyToAllConfigs     Boolean                   @default(false) @map("apply_to_all_configs")
+  specificTabs          String[]                  @map("specific_tabs") // Nur bestimmte Tabs
+  
+  isActive              Boolean                   @default(true) @map("is_active")
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+
+  // Relations
+  machine               Machine                   @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  rule                  Rule                      @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@unique([machineId, ruleId])
+  @@map("machine_rules")
+}
+
+model RuleTemplate {
+  id                    String                    @id @default(cuid())
+  name                  String                    // "Safety Package Template"
+  description           String?
+  category              RuleCategory
+  
+  // Template Definition (JSON)
+  templateData          Json                      @map("template_data") // Struktur für Rule-Erstellung
+  
+  // Metadata
+  isPublic              Boolean                   @default(false) @map("is_public")
+  createdBy             String?                   @map("created_by")
+  usageCount            Int                       @default(0) @map("usage_count")
+  tags                  String[]
+  
+  createdAt             DateTime                  @default(now()) @map("created_at")
+  updatedAt             DateTime                  @updatedAt @map("updated_at")
+
+  @@map("rule_templates")
+}
+
+model DependencyEvaluationCache {
+  id                    String                    @id @default(cuid())
+  machineId             String                    @map("machine_id")
+  configurationHash     String                    @map("configuration_hash")
+  
+  visibleConfigurations String[]                  @map("visible_configurations")
+  requiredConfigurations String[]                 @map("required_configurations")
+  availableOptions      Json                      @map("available_options")
+  
+  expiresAt             DateTime                  @map("expires_at")
+  createdAt             DateTime                  @default(now()) @map("created_at")
+
+  machine               Machine                   @relation(fields: [machineId], references: [id], onDelete: Cascade)
+
+  @@unique([machineId, configurationHash])
+  @@map("dependency_evaluation_cache")
+}
+
+// ===================================
 // ENUMS FOR PRODUCT CONFIGURATOR
 // ===================================
 
@@ -290,6 +464,95 @@ enum ValidationRuleType {
   MAX_VALUE
   REGEX
   CUSTOM
+}
+
+// ===================================
+// ENUMS FOR RULE SYSTEM
+// ===================================
+
+enum RuleCategory {
+  DEPENDENCY          // Abhängigkeits-Rules
+  VALIDATION         // Validierungs-Rules  
+  BUSINESS_LOGIC     // Business-Rules
+  PRICING           // Preis-Rules
+  UI_BEHAVIOR       // UI-Verhalten
+  COMPLIANCE        // Compliance-Rules
+  WORKFLOW          // Workflow-Rules
+}
+
+enum RuleType {
+  SHOW_HIDE         // Zeige/Verstecke Elements
+  REQUIRE_OPTIONAL  // Mache required/optional
+  ENABLE_DISABLE    // Aktiviere/Deaktiviere
+  SET_DEFAULT       // Setze Standardwerte
+  PRICE_MODIFIER    // Modifiziere Preise
+  ADD_OPTIONS       // Füge Optionen hinzu
+  RESTRICT_OPTIONS  // Schränke Optionen ein
+  VALIDATION_CHECK  // Validierung
+  WARNING_MESSAGE   // Zeige Warnung
+  ERROR_MESSAGE     // Zeige Fehler
+  CUSTOM_ACTION     // Custom Logic
+}
+
+enum ConditionType {
+  SIMPLE_EQUALS     // Einfacher Vergleich
+  COMPLEX_LOGIC     // Komplexe JSON-Logik
+  CALCULATION       // Berechnungsbasiert
+  EXTERNAL_API      // Externe API-Abfrage
+  CUSTOM_FUNCTION   // Custom Function
+}
+
+enum ConditionTargetType {
+  CONFIGURATION     // Configuration-Wert
+  OPTION           // Spezifische Option
+  CUSTOM_FIELD     // Custom Field
+  CALCULATED_VALUE // Berechneter Wert
+  EXTERNAL_DATA    // Externe Daten
+}
+
+enum ActionType {
+  MODIFY_VISIBILITY    // Sichtbarkeit ändern
+  MODIFY_REQUIREMENT   // Pflicht-Status ändern
+  MODIFY_AVAILABILITY  // Verfügbarkeit ändern
+  SET_VALUE           // Wert setzen
+  MODIFY_PRICE        // Preis ändern
+  SHOW_MESSAGE        // Message anzeigen
+  TRIGGER_VALIDATION  // Validierung auslösen
+  CUSTOM_SCRIPT       // Custom Script ausführen
+}
+
+enum ActionTargetType {
+  CONFIGURATION    // Configuration
+  OPTION          // Option
+  TAB             // Kompletter Tab
+  PRICE           // Preis
+  MESSAGE         // User-Message
+  VALIDATION      // Validierung
+  CUSTOM          // Custom Target
+}
+
+enum ConditionOperator {
+  EQUALS
+  NOT_EQUALS
+  GREATER_THAN
+  LESS_THAN
+  GREATER_EQUAL
+  LESS_EQUAL
+  CONTAINS
+  NOT_CONTAINS
+  IN_LIST
+  NOT_IN_LIST
+  REGEX_MATCH
+  IS_EMPTY
+  IS_NOT_EMPTY
+  CUSTOM_LOGIC
+}
+
+enum LogicalOperator {
+  AND
+  OR
+  XOR
+  NOT
 }
 
 // ===================================

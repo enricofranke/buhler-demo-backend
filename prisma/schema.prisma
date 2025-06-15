@@ -600,6 +600,12 @@ model Quotation {
   title            String?
   status           QuotationStatus @default(DRAFT)
   
+  // Versionierung
+  version          Int             @default(1)           // Version number
+  parentQuotationId String?        @map("parent_quotation_id") // Reference to parent version
+  isLatestVersion  Boolean         @default(true) @map("is_latest_version")
+  versionNotes     String?         @map("version_notes") // Changes description
+  
   // References
   userId           String          @map("user_id")       // Sales person
   customerId       String          @map("customer_id")   // Customer
@@ -618,6 +624,10 @@ model Quotation {
   customer         Customer        @relation(fields: [customerId], references: [id])
   machine          Machine?        @relation(fields: [machineId], references: [id])
   configurations   QuotationConfiguration[]
+  
+  // Versionierung Relations
+  parentQuotation  Quotation?      @relation("QuotationVersions", fields: [parentQuotationId], references: [id])
+  childVersions    Quotation[]     @relation("QuotationVersions")
 
   @@map("quotations")
 }

@@ -10,6 +10,8 @@ import configuration from '../config/configuration';
 import { PrismaModule } from '../prisma/prisma.module';
 import { MachineConfiguratorModule } from '../machine-configurator/machine-configurator.module';
 import { AuthModule } from '../auth/auth.module';
+import { QuotationsModule } from '../quotations/quotations.module';
+import { CustomersModule } from '../customers/customers.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
@@ -57,6 +59,8 @@ import { AppService } from './app.service';
     PrismaModule,
     AuthModule,
     MachineConfiguratorModule,
+    QuotationsModule,
+    CustomersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

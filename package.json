@@ -23,8 +23,9 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "seed:trias": "ts-node prisma/seeds/trias-machine-seed.ts",
+    "seed:trias600": "ts-node prisma/seeds/trias-600-simple-seed.ts",
     "seed:roles": "ts-node prisma/seeds/role.seed.ts",
-    "seed:all": "npm run seed:roles && npm run seed:trias"
+    "seed:all": "npm run seed:roles && npm run seed:trias && npm run seed:trias600"
   },
   "private": true,
   "dependencies": {

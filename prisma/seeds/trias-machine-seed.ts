@@ -5,14 +5,88 @@ const prisma = new PrismaClient();
 async function seedTriasMachine() {
   console.log('🌱 Seeding Trias machine...');
 
+  // 0. Clean up existing Trias data to avoid duplicates
+  console.log('🧹 Cleaning up existing Trias data...');
+  
+  // Delete in correct order due to foreign key constraints
+  await prisma.tabConfiguration.deleteMany({
+    where: {
+      tab: {
+        machine: {
+          group: {
+            name: 'Trias'
+          }
+        }
+      }
+    }
+  });
+
+  await prisma.configurationOption.deleteMany({
+    where: {
+      configuration: {
+        tabConfigurations: {
+          some: {
+            tab: {
+              machine: {
+                group: {
+                  name: 'Trias'
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  });
+
+  await prisma.configuration.deleteMany({
+    where: {
+      tabConfigurations: {
+        some: {
+          tab: {
+            machine: {
+              group: {
+                name: 'Trias'
+              }
+            }
+          }
+        }
+      }
+    }
+  });
+
+  await prisma.configurationTab.deleteMany({
+    where: {
+      machine: {
+        group: {
+          name: 'Trias'
+        }
+      }
+    }
+  });
+
+  await prisma.machine.deleteMany({
+    where: {
+      group: {
+        name: 'Trias'
+      }
+    }
+  });
+
+  await prisma.machineGroup.deleteMany({
+    where: {
+      name: 'Trias'
+    }
+  });
+
+  console.log('✅ Trias data cleanup completed');
+
   // 1. Create Trias Machine Group
-  const triasGroup = await prisma.machineGroup.upsert({
-    where: { name: 'Trias' },
-    update: {},
-    create: {
+  const triasGroup = await prisma.machineGroup.create({
+    data: {
       name: 'Trias',
       description: 'Trias grinding machine series with multiple roller length options',
-      color: '#2563eb',
+      color: '#009B91', // Bühler Primary Color
       icon: 'machine-grinding',
       isActive: true,
     },
@@ -21,53 +95,35 @@ async function seedTriasMachine() {
   console.log('✅ Trias machine group created:', triasGroup.name);
 
   // 2. Create Trias Machines (300, 600, 800)
-  let trias300Machine = await prisma.machine.findFirst({
-    where: { name: 'Trias-300' },
+  const trias300Machine = await prisma.machine.create({
+    data: {
+      name: 'Trias-300',
+      description: 'Trias-300 FDAD with 300mm roller length',
+      groupId: triasGroup.id,
+      tags: ['FDAD', '300mm', 'compact'],
+      isActive: true,
+    },
   });
 
-  if (!trias300Machine) {
-    trias300Machine = await prisma.machine.create({
-      data: {
-        name: 'Trias-300',
-        description: 'Trias-300 FDAD with 300mm roller length',
-        groupId: triasGroup.id,
-        tags: ['FDAD', '300mm', 'compact'],
-        isActive: true,
-      },
-    });
-  }
-
-  let trias600Machine = await prisma.machine.findFirst({
-    where: { name: 'Trias-600' },
+  const trias600Machine = await prisma.machine.create({
+    data: {
+      name: 'Trias-600',
+      description: 'Trias-600 FDAD with 600mm roller length',
+      groupId: triasGroup.id,
+      tags: ['FDAD', '600mm', 'standard'],
+      isActive: true,
+    },
   });
 
-  if (!trias600Machine) {
-    trias600Machine = await prisma.machine.create({
-      data: {
-        name: 'Trias-600',
-        description: 'Trias-600 FDAD with 600mm roller length',
-        groupId: triasGroup.id,
-        tags: ['FDAD', '600mm', 'standard'],
-        isActive: true,
-      },
-    });
-  }
-
-  let trias800Machine = await prisma.machine.findFirst({
-    where: { name: 'Trias-800' },
+  const trias800Machine = await prisma.machine.create({
+    data: {
+      name: 'Trias-800',
+      description: 'Trias-800 FDAC with 800mm roller length',
+      groupId: triasGroup.id,
+      tags: ['FDAC', '800mm', 'large'],
+      isActive: true,
+    },
   });
-
-  if (!trias800Machine) {
-    trias800Machine = await prisma.machine.create({
-      data: {
-        name: 'Trias-800',
-        description: 'Trias-800 FDAC with 800mm roller length',
-        groupId: triasGroup.id,
-        tags: ['FDAC', '800mm', 'large'],
-        isActive: true,
-      },
-    });
-  }
 
   console.log('✅ Trias machines created:', trias300Machine.name, trias600Machine.name, trias800Machine.name);
 

@@ -469,7 +469,6 @@ enum ValidationRuleType {
 // ===================================
 // ENUMS FOR RULE SYSTEM
 // ===================================
-
 enum RuleCategory {
   DEPENDENCY          // Abhängigkeits-Rules
   VALIDATION         // Validierungs-Rules  
@@ -661,3 +660,4 @@ enum QuotationStatus {
   REJECTED
   EXPIRED
 }
+

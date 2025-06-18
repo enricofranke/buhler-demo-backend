@@ -4,4 +4,6 @@ export enum ConfigurationType {
   BOOLEAN = 'BOOLEAN',
   TEXT = 'TEXT',
   NUMBER = 'NUMBER',
-} 
+  CUSTOMER = 'CUSTOMER',
+  BUHLER_CONTACT = 'BUHLER_CONTACT',
+}   

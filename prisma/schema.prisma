@@ -451,6 +451,7 @@ enum ConfigurationType {
   TEXT
   NUMBER
   CUSTOMER
+  BUHLER_CONTACT
 }
 
 enum ConfigurationDependencyAction {
@@ -640,6 +641,12 @@ model QuotationConfiguration {
   customValue            String? @map("custom_value")        // For TEXT/NUMBER types
   notes                  String?
   
+  // 🔥 NEW: Versionierung Support
+  quotationVersion       Int     @default(1) @map("quotation_version") // Links to Quotation.version
+  isCurrentVersion       Boolean @default(true) @map("is_current_version") // Latest version for this configuration
+  previousValueHash      String? @map("previous_value_hash") // Hash of previous value for change detection
+  changeDescription      String? @map("change_description") // What changed in this version
+  
   createdAt              DateTime @default(now()) @map("created_at")
   updatedAt              DateTime @updatedAt @map("updated_at")
 
@@ -648,7 +655,8 @@ model QuotationConfiguration {
   configuration  Configuration        @relation(fields: [configurationId], references: [id])
   selectedOption ConfigurationOption? @relation(fields: [selectedOptionId], references: [id])
 
-  @@unique([quotationId, configurationId])
+  // 🔥 NEW: Unique constraint includes version to allow multiple versions per configuration
+  @@unique([quotationId, configurationId, quotationVersion])
   @@map("quotation_configurations")
 }
 

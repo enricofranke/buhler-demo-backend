@@ -198,55 +198,19 @@ async function seedTriasMachine() {
     },
   });
 
-  // 3. Customer Name
-  const customerNameConfig = await prisma.configuration.create({
+  // 3. Customer Information (CUSTOMER type)
+  const customerInfoConfig = await prisma.configuration.create({
     data: {
-      name: 'Customer Name',
-      description: 'Eingabefeld',
-      helpText: '',
-      type: 'TEXT',
+      name: 'Customer Information',
+      description: 'Complete customer information for the quotation',
+      helpText: 'All customer details are required for generating the quotation. Information is auto-filled from the selected customer but can be modified for this specific machine configuration.',
+      type: 'CUSTOMER',
       isRequired: true,
       isActive: true,
     },
   });
 
-  // 4. Customer Contact Person
-  const customerContactPersonConfig = await prisma.configuration.create({
-    data: {
-      name: 'Customer Contact Person',
-      description: 'Eingabefeld',
-      helpText: '',
-      type: 'TEXT',
-      isRequired: true,
-      isActive: true,
-    },
-  });
-
-  // 5. Contact Person E-Mail
-  const contactPersonEmailConfig = await prisma.configuration.create({
-    data: {
-      name: 'Contact Person E-Mail',
-      description: 'Eingabefeld',
-      helpText: 'Mailadresse',
-      type: 'TEXT',
-      isRequired: true,
-      isActive: true,
-    },
-  });
-
-  // 6. Customer Country
-  const customerCountryConfig = await prisma.configuration.create({
-    data: {
-      name: 'Customer Country',
-      description: 'Selection / Suche',
-      helpText: 'Auswahlliste von allen Ländern der Erde',
-      type: 'SINGLE_CHOICE',
-      isRequired: true,
-      isActive: true,
-    },
-  });
-
-  // Add comprehensive country list
+  // Add comprehensive country list as options for the customer configuration
   const countries = [
     'Germany', 'Switzerland', 'Austria', 'France', 'Italy', 'Spain', 'Netherlands',
     'Belgium', 'United Kingdom', 'Poland', 'Czech Republic', 'Hungary', 'Slovakia',
@@ -266,7 +230,7 @@ async function seedTriasMachine() {
   for (const country of countries) {
     await prisma.configurationOption.create({
       data: {
-        configurationId: customerCountryConfig.id,
+        configurationId: customerInfoConfig.id,
         value: country.toLowerCase().replace(/\s+/g, '_'),
         displayName: country,
         isDefault: country === 'Germany',
@@ -2041,10 +2005,7 @@ async function seedTriasMachine() {
   const generalConfigs = [
     consultationValueConfig,
     buhlerContactConfig,
-    customerNameConfig,
-    customerContactPersonConfig,
-    contactPersonEmailConfig,
-    customerCountryConfig,
+    customerInfoConfig,
     customerLanguageConfig,
     targetApplicationConfig,
     machineProductionCountryConfig

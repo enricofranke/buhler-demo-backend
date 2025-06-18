@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsUUID, IsEnum, IsNumber, IsDateString } from 'class-validator';
+import { IsString, IsOptional, IsEnum, IsNumber, IsDateString } from 'class-validator';
 import { QuotationStatus } from '@prisma/client';
 
 export class UpdateQuotationDto {
@@ -15,7 +15,7 @@ export class UpdateQuotationDto {
 
   @ApiProperty({ description: 'The machine ID', required: false })
   @IsOptional()
-  @IsUUID()
+  @IsString()
   machineId?: string;
 
   @ApiProperty({ description: 'The total price', required: false })

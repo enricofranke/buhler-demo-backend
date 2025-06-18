@@ -32,7 +32,7 @@ export class CustomersController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(@Body() createCustomerDto: CreateCustomerDto, @Request() req: any): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.customersService.create(createCustomerDto, userId);
   }
 
@@ -53,7 +53,7 @@ export class CustomersController {
     @Query('country') country?: string,
     @Query('isActive') isActive?: string
   ): Promise<any[]> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     const isActiveBoolean = isActive !== undefined ? isActive === 'true' : undefined;
     return this.customersService.findAll({ userId, search, country, isActive: isActiveBoolean });
   }
@@ -69,7 +69,7 @@ export class CustomersController {
   })
   @ApiResponse({ status: 404, description: 'Not Found.' })
   async findOne(@Param('id') id: string, @Request() req: any): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.customersService.findOne(id, userId);
   }
 
@@ -89,7 +89,7 @@ export class CustomersController {
     @Body() updateCustomerDto: UpdateCustomerDto,
     @Request() req: any
   ): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.customersService.update(id, updateCustomerDto, userId);
   }
 
@@ -103,7 +103,7 @@ export class CustomersController {
   })
   @ApiResponse({ status: 404, description: 'Not Found.' })
   async remove(@Param('id') id: string, @Request() req: any): Promise<void> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.customersService.remove(id, userId);
   }
 
@@ -117,7 +117,7 @@ export class CustomersController {
     type: [Object] 
   })
   async getCustomerQuotations(@Param('id') id: string, @Request() req: any): Promise<any[]> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.customersService.getCustomerQuotations(id, userId);
   }
 }

@@ -36,7 +36,7 @@ export class QuotationsController {
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(@Body() createQuotationDto: CreateQuotationDto, @Request() req: any): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.create(createQuotationDto, userId);
   }
 
@@ -57,7 +57,7 @@ export class QuotationsController {
     @Query('customerId') customerId?: string,
     @Query('machineId') machineId?: string
   ): Promise<any[]> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.findAll({ userId, status, customerId, machineId });
   }
 
@@ -72,7 +72,7 @@ export class QuotationsController {
   })
   @ApiResponse({ status: 404, description: 'Not Found.' })
   async findOne(@Param('id') id: string, @Request() req: any): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.findOne(id, userId);
   }
 
@@ -92,7 +92,7 @@ export class QuotationsController {
     @Body() updateQuotationDto: UpdateQuotationDto,
     @Request() req: any
   ): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.update(id, updateQuotationDto, userId);
   }
 
@@ -106,7 +106,7 @@ export class QuotationsController {
   })
   @ApiResponse({ status: 404, description: 'Not Found.' })
   async remove(@Param('id') id: string, @Request() req: any): Promise<void> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.remove(id, userId);
   }
 
@@ -126,7 +126,7 @@ export class QuotationsController {
     @Body() createConfigurationDto: CreateQuotationConfigurationDto,
     @Request() req: any
   ): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.saveConfiguration(quotationId, createConfigurationDto, userId);
   }
 
@@ -147,7 +147,7 @@ export class QuotationsController {
     @Body() updateConfigurationDto: UpdateQuotationConfigurationDto,
     @Request() req: any
   ): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.updateConfiguration(quotationId, configId, updateConfigurationDto, userId);
   }
 
@@ -166,7 +166,7 @@ export class QuotationsController {
     @Param('configId') configId: string,
     @Request() req: any
   ): Promise<void> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.removeConfiguration(quotationId, configId, userId);
   }
 
@@ -185,7 +185,7 @@ export class QuotationsController {
     @Body() updateStatusDto: UpdateQuotationStatusDto,
     @Request() req: any
   ): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.updateStatus(id, updateStatusDto.status, userId);
   }
 
@@ -204,7 +204,7 @@ export class QuotationsController {
     @Body() createVersionDto: CreateQuotationVersionDto,
     @Request() req: any
   ): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.createVersion(parentQuotationId, createVersionDto, userId);
   }
 
@@ -221,7 +221,7 @@ export class QuotationsController {
     @Param('id') parentQuotationId: string,
     @Request() req: any
   ): Promise<any[]> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.getVersions(parentQuotationId, userId);
   }
 
@@ -240,7 +240,7 @@ export class QuotationsController {
     @Body() cloneData: { title?: string },
     @Request() req: any
   ): Promise<any> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.clone(id, cloneData.title, userId);
   }
 
@@ -258,7 +258,7 @@ export class QuotationsController {
     @Param('id') id: string,
     @Request() req: any
   ): Promise<{ totalPrice: number; currency: string; breakdown: any[] }> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.calculatePrice(id, userId);
   }
 
@@ -275,7 +275,7 @@ export class QuotationsController {
     @Param('id') id: string,
     @Request() req: any
   ): Promise<Buffer> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.generatePdf(id, userId);
   }
 
@@ -293,7 +293,7 @@ export class QuotationsController {
     @Body() emailData: { message?: string; sendCopy?: boolean },
     @Request() req: any
   ): Promise<void> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.sendToCustomer(id, emailData, userId);
   }
 
@@ -312,7 +312,7 @@ export class QuotationsController {
     @Param('format') format: 'pdf' | 'excel',
     @Request() req: any
   ): Promise<Buffer> {
-    const userId = req.user.sub;
+    const userId = req.user.id; // ✅ Fix: Use .id instead of .sub
     return this.quotationsService.exportQuotation(id, format, userId);
   }
 } 

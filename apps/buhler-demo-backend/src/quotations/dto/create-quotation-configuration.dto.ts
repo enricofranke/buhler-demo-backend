@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsUUID } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class CreateQuotationConfigurationDto {
   @ApiProperty({ description: 'The configuration ID' })
-  @IsUUID()
-  configurationId: string;
+  @IsString()
+  configurationId!: string;
 
   @ApiProperty({ description: 'The selected option ID', required: false })
   @IsOptional()
-  @IsUUID()
+  @IsString()
   selectedOptionId?: string;
 
   @ApiProperty({ description: 'Custom value for text/number configurations', required: false })

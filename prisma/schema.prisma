@@ -450,6 +450,7 @@ enum ConfigurationType {
   BOOLEAN
   TEXT
   NUMBER
+  CUSTOMER
 }
 
 enum ConfigurationDependencyAction {

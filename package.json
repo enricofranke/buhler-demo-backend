@@ -25,7 +25,9 @@
     "seed:trias": "ts-node prisma/seeds/trias-machine-seed.ts",
     "seed:trias600": "ts-node prisma/seeds/trias-600-simple-seed.ts",
     "seed:roles": "ts-node prisma/seeds/role.seed.ts",
-    "seed:all": "npm run seed:roles && npm run seed:trias && npm run seed:trias600"
+    "seed:customers": "ts-node prisma/seeds/customer-seed.ts",
+    "seed:customer-assignments": "ts-node prisma/seeds/customer-user-assignment-seed.ts",
+    "seed:all": "npm run seed:roles && npm run seed:customers && npm run seed:customer-assignments && npm run seed:trias && npm run seed:trias600"
   },
   "private": true,
   "dependencies": {

@@ -7,6 +7,16 @@ async function seedCustomers() {
 
   const customers = [
     {
+      id: 'guest-configuration',
+      companyName: 'Guest Configuration',
+      contactPerson: 'Guest User',
+      email: 'guest@example.com',
+      phone: '+49 000 000-0000',
+      address: 'Guest Address',
+      country: 'Germany',
+      isActive: true,
+    },
+    {
       companyName: 'Henkel AG & Co. KGaA',
       contactPerson: 'Dr. Andreas Mueller',
       email: 'andreas.mueller@henkel.com',

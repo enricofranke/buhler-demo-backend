@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsUUID, IsDateString } from 'class-validator';
+import { IsString, IsOptional, IsDateString } from 'class-validator';
 
 export class CreateQuotationDto {
   @ApiProperty({ description: 'The title of the quotation', required: false })
@@ -8,12 +8,12 @@ export class CreateQuotationDto {
   title?: string;
 
   @ApiProperty({ description: 'The customer ID' })
-  @IsUUID()
-  customerId: string;
+  @IsString()
+  customerId!: string;
 
   @ApiProperty({ description: 'The machine ID', required: false })
   @IsOptional()
-  @IsUUID()
+  @IsString()
   machineId?: string;
 
   @ApiProperty({ description: 'The currency code', default: 'EUR', required: false })

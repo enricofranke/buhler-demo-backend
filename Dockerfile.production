@@ -3,14 +3,12 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 
-# Copy package files
+# Copy all package files for the monorepo
 COPY package*.json ./
 COPY nx.json ./
 COPY tsconfig*.json ./
-COPY apps/buhler-demo-backend/package*.json apps/buhler-demo-backend/
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (we need dev deps for building)
 RUN npm ci
 
 # Stage 2: Build
@@ -27,7 +25,7 @@ RUN npx prisma generate
 # Build the application
 RUN npx nx build buhler-demo-backend --configuration=production
 
-# Stage 3: Production
+# Stage 3: Production  
 FROM node:20-alpine AS runner
 WORKDIR /app
 
